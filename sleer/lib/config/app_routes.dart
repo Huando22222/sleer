@@ -8,8 +8,8 @@ class AppRoutes {
   static const signup = '/signup';
 
   static final pages = {
-    welcome: (context) => WelComePage(),
-    home: (context) => HomePage(),
-    signup: (context) => SignUpPage(),
+    welcome: (context) => const WelComePage(),
+    home: (context) => const HomePage(),
+    signup: (context) => const SignUpPage(),
   };
 }

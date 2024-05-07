@@ -49,7 +49,10 @@ class _SignUpPageState extends State<SignUpPage> {
                       builder: (context, state) {
                         if (state is SignUpInitial) {
                           // return SignUpInputOTP();
-                          return SignUpInputPhoneNumber();
+                          return const SignUpInputPhoneNumber();
+                        }
+                        if (state is SignUpVerifyingOTP) {
+                          return const SignUpInputOTP();
                         }
                         // return Container();
                         return Placeholder();

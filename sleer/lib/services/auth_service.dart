@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:sleer/config/api_routes.dart';
+import 'package:sleer/config/app_api_routes.dart';
 import 'package:sleer/models/auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +20,7 @@ class AuthService {
     if (isValid(phone, password)) {
       try {
         final response = await http.post(
-          Uri.parse(ApiRoutes.loginAuth),
+          Uri.parse(AppApiRoutes.loginAuth),
           //
           body: {
             'phone': phone,
