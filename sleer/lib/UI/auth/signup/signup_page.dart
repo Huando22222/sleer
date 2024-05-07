@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sleer/UI/auth/signup/signup_input_OTP.dart';
+import 'package:sleer/UI/auth/signup/signup_input_otp.dart';
 import 'package:sleer/UI/auth/signup/signup_input_phone_number.dart';
 import 'package:sleer/blocs/register_bloc/signup_bloc.dart';
 import 'package:sleer/blocs/register_bloc/signup_state.dart';
