@@ -44,7 +44,11 @@ class LoginPage extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed(AppRoutes.signup);
+                        // context.read<AuthBloc>().add(AuthLogoutEvent());
+                        // Navigator.of(context).pushNamed(AppRoutes.signup);
+                        Navigator.of(context).pushNamed(
+                          AppRoutes.signup,
+                        );
                       },
                       child: const Text(
                         "SignUp",

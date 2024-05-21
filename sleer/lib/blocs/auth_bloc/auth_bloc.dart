@@ -9,6 +9,10 @@ import 'package:sleer/services/auth_service.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<AuthLoginEvent>(authLogin);
+
+    on<AuthLogoutEvent>((event, emit) {
+      emit(AuthLoadingState());
+    });
   }
 
   FutureOr<void> authLogin(

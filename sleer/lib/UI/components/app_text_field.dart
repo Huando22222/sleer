@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppTextField extends StatelessWidget {
   final String? hintText;
-  const AppTextField({super.key, this.hintText});
+  final Widget? label;
+  const AppTextField({super.key, this.hintText, this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +13,7 @@ class AppTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         hintText: hintText,
+        label: label,
       ),
     );
   }

@@ -21,3 +21,18 @@ class AuthLoginState extends AuthState {
 }
 
 class AuthLogoutState extends AuthState {}
+
+/////////////////////////////////////
+
+class AuthSignUp extends AuthState {} //1
+
+class AuthSignUpVerifyingState extends AuthState {}
+
+class AuthSignUpVerifyingOTP extends AuthState {} //1
+
+class AuthSignUpVerifiedUserState extends AuthState {} //2
+
+class AuthSignUpVerifiedPasswordState extends AuthState {} //3
+
+class AuthSignUpedState extends AuthState {} //3
+
