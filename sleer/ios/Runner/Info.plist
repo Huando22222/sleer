@@ -46,6 +46,13 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<!-- custome -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires Photo Library access to function properly.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires Camera access to function properly.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires Microphone access to function properly.</string>
+
 	<key>NSContactsUsageDescription</key>  
 	<string>This app requires contacts access to function properly.</string>
 </dict>

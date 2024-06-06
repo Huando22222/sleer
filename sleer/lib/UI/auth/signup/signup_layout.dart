@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sleer/config/app_colors.dart';
-import 'package:sleer/config/app_images.dart';
+import 'package:sleer/config/config_colors.dart';
+import 'package:sleer/config/config_images.dart';
 
 class SignUpLayout extends StatelessWidget {
   final Widget page;
@@ -11,7 +11,7 @@ class SignUpLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: AppColors.signUpPageColor,
+      backgroundColor: ConfigColors.signUpPageColor,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -26,7 +26,7 @@ class SignUpLayout extends StatelessWidget {
                   left: 0,
                   right: 0,
                   child: SvgPicture.asset(
-                    AppImages.logo,
+                    ConfigImages.logo,
                     width: 150,
                     height: 150,
                   ),

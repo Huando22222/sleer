@@ -2,12 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleer/UI/auth/login/login_page.dart';
+import 'package:sleer/UI/auth/profile/profile_page.dart';
+import 'package:sleer/UI/chat/chat_page.dart';
 import 'package:sleer/UI/home/home_page.dart';
 import 'package:sleer/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sleer/blocs/auth_bloc/auth_state.dart';
 import 'package:sleer/blocs/contact_bloc/contact_bloc.dart';
-import 'package:sleer/config/app_routes.dart';
-import 'package:sleer/UI/welcome/welcome_page.dart';
+import 'package:sleer/config/config_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,10 +39,9 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         // initialRoute: "/welcome",
-        routes: AppRoutes.pages,
+        routes: ConfigRoutes.pages,
         home: const StateWidget(),
         onUnknownRoute: (settings) {
-          // Trả về một trang hoặc widget tùy thuộc vào nhu cầu của bạn.
           return MaterialPageRoute(
             builder: (context) => const Scaffold(
               body: Center(
@@ -64,7 +64,17 @@ class StateWidget extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthInitial) {
-          return const LoginPage();
+          // return const LoginPage();
+          // return const ProfilePage();
+          return Scaffold(
+            body: PageView(
+              children: const [
+                ProfilePage(),
+                HomePage(),
+                ChatPage(),
+              ],
+            ),
+          );
         }
         if (state is AuthLoginState) {
           return const HomePage();

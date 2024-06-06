@@ -8,8 +8,8 @@ import 'package:pinput/pinput.dart';
 import 'package:sleer/UI/auth/signup/signup_layout.dart';
 import 'package:sleer/UI/components/app_button.dart';
 import 'package:sleer/UI/components/app_text_field.dart';
-import 'package:sleer/config/app_images.dart';
-import 'package:sleer/config/app_routes.dart';
+import 'package:sleer/config/config_images.dart';
+import 'package:sleer/config/config_routes.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -21,7 +21,12 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final TextEditingController controller = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  bool passwordsMatch = false;
+
+  final TextEditingController phoneController = TextEditingController();
   // String initialCountry = 'NG';
   PhoneNumber number = PhoneNumber(
     isoCode: 'VN',
@@ -36,8 +41,27 @@ class _SignUpPageState extends State<SignUpPage> {
   // }
 
   @override
+  void initState() {
+    super.initState();
+    // Adding listeners to the controllers to validate passwords on change
+    passwordController.addListener(_validatePasswords);
+    confirmPasswordController.addListener(_validatePasswords);
+  }
+
+  void _validatePasswords() {
+    // Updating the state to trigger a rebuild with the new value of passwordsMatch
+    setState(() {
+      passwordsMatch = passwordController.text.isNotEmpty &&
+          passwordController.text == confirmPasswordController.text &&
+          passwordController.text.length >= 8;
+    });
+  }
+
+  @override
   void dispose() {
-    controller.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -81,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       autoValidateMode: AutovalidateMode.disabled,
                       selectorTextStyle: const TextStyle(color: Colors.black),
                       initialValue: number,
-                      textFieldController: controller,
+                      textFieldController: phoneController,
                       formatInput: true,
                       keyboardType: const TextInputType.numberWithOptions(
                         signed: true,
@@ -136,10 +160,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   children: [
                     AppTextField(
                       // hintText: "Password",
+                      controller: passwordController,
+                      onChanged: (value) => _validatePasswords(),
                       label: Row(
                         children: [
                           SvgPicture.asset(
-                            AppImages.shield,
+                            ConfigImages.shield,
                           ),
                           const SizedBox(
                             width: 10,
@@ -152,12 +178,26 @@ class _SignUpPageState extends State<SignUpPage> {
                       height: 10,
                     ),
                     AppTextField(
+                      controller: confirmPasswordController,
+                      onChanged: (value) => _validatePasswords(),
                       label: Text("Comfirm password"),
                     ),
-                    AppButton(
-                      title: "Sign Up",
-                      onPressed: () {},
-                    ),
+                    if (passwordsMatch)
+                      AppButton(
+                        title: "Sign Up",
+                        onPressed: () {
+                          try {
+                            debugPrint(
+                                "seef ${phone}-${passwordController.text}");
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              ConfigRoutes.login,
+                              (route) => false,
+                            );
+                          } catch (e) {
+                            debugPrint(e.toString());
+                          }
+                        },
+                      ),
                   ],
                 ),
               ),

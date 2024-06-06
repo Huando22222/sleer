@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sleer/UI/components/app_text_field.dart';
-import 'package:sleer/config/app_images.dart';
-import 'package:sleer/config/app_routes.dart';
+import 'package:sleer/config/config_images.dart';
+import 'package:sleer/config/config_routes.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -24,7 +24,7 @@ class LoginPage extends StatelessWidget {
                 const Spacer(),
                 Center(
                   child: SvgPicture.asset(
-                    AppImages.logo,
+                    ConfigImages.logo,
                     width: 100,
                     height: 100,
                   ),
@@ -47,7 +47,7 @@ class LoginPage extends StatelessWidget {
                         // context.read<AuthBloc>().add(AuthLogoutEvent());
                         // Navigator.of(context).pushNamed(AppRoutes.signup);
                         Navigator.of(context).pushNamed(
-                          AppRoutes.signup,
+                          ConfigRoutes.signup,
                         );
                       },
                       child: const Text(
