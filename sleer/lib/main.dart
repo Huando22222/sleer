@@ -64,17 +64,17 @@ class StateWidget extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthInitial) {
-          // return const LoginPage();
+          return const LoginPage();
           // return const ProfilePage();
-          return Scaffold(
-            body: PageView(
-              children: const [
-                ProfilePage(),
-                HomePage(),
-                ChatPage(),
-              ],
-            ),
-          );
+          // return Scaffold(
+          //   body: PageView(
+          //     children: const [
+          //       ProfilePage(),
+          //       HomePage(),
+          //       ChatPage(),
+          //     ],
+          //   ),
+          // );
         }
         if (state is AuthLoginState) {
           return const HomePage();

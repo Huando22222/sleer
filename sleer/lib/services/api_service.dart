@@ -1,83 +1,55 @@
-import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:sleer/config/config_api_routes.dart';
+import 'package:dio/dio.dart';
 
 class ApiService {
+  final String _baseUrl = ConfigApiRoutes.baseURL;
   final Dio _dio = Dio();
-  static const String _baseUrl = ConfigApiRoutes.baseURL;
 
-  // Khởi tạo các header và option mặc định
   ApiService() {
+    // Cấu hình cho Dio
     _dio.options.baseUrl = _baseUrl;
-    _dio.options.headers = {
-      HttpHeaders.contentTypeHeader: 'application/json',
-      HttpHeaders.acceptHeader: 'application/json',
-    };
-    // Thêm interceptor nếu cần
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        // Xử lý trước khi gửi yêu cầu
-        return handler.next(options);
-      },
-      onResponse: (response, handler) {
-        // Xử lý phản hồi
-        return handler.next(response);
-      },
-      onError: (error, handler) {
-        // Xử lý lỗi
-        return handler.next(error);
-      },
-    ));
+    _dio.options.connectTimeout = const Duration(seconds: 5);
+    _dio.options.receiveTimeout = const Duration(seconds: 5);
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onResponse: (Response response, ResponseInterceptorHandler handler) {
+          // if (response.requestOptions.path.startsWith('/users')) {
+          // } else if (response.requestOptions.path.startsWith('/products')) {}
+          // return handler.next(response);
+        },
+        onError: (DioException error, ErrorInterceptorHandler handler) {
+          // if (error.requestOptions.path.startsWith('/users')) {
+          // } else if (error.requestOptions.path.startsWith('/products')) {}
+          // return handler.next(error);
+        },
+      ),
+    );
   }
 
-  // Hàm gọi API GET
-  Future<Response> get(String path,
-      {Map<String, dynamic>? queryParameters}) async {
+  Future<Response<T>> request<T>(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    CancelToken? cancelToken,
+    Options? options,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
     try {
-      final response = await _dio.get(path, queryParameters: queryParameters);
+      final response = await _dio.request<T>(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        cancelToken: cancelToken,
+        options: options,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
       return response;
     } on DioException catch (e) {
       // Xử lý lỗi ở đây
-      throw Exception('Lỗi khi gọi API: $e');
-    }
-  }
-
-  // Hàm gọi API POST
-  Future<Response> post(String path, dynamic data,
-      {Map<String, dynamic>? queryParameters}) async {
-    try {
-      final response =
-          await _dio.post(path, data: data, queryParameters: queryParameters);
-      return response;
-    } on DioException catch (e) {
-      // Xử lý lỗi ở đây
-      throw Exception('Lỗi khi gọi API: $e');
-    }
-  }
-
-  // Hàm gọi API PUT
-  Future<Response> put(String path, dynamic data,
-      {Map<String, dynamic>? queryParameters}) async {
-    try {
-      final response =
-          await _dio.put(path, data: data, queryParameters: queryParameters);
-      return response;
-    } on DioException catch (e) {
-      // Xử lý lỗi ở đây
-      throw Exception('Lỗi khi gọi API: $e');
-    }
-  }
-
-  // Hàm gọi API DELETE
-  Future<Response> delete(String path,
-      {Map<String, dynamic>? queryParameters}) async {
-    try {
-      final response =
-          await _dio.delete(path, queryParameters: queryParameters);
-      return response;
-    } on DioException catch (e) {
-      // Xử lý lỗi ở đây
-      throw Exception('Lỗi khi gọi API: $e');
+      throw Exception('API error: $e');
     }
   }
 }

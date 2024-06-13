@@ -1,7 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:pinput/pinput.dart';
 
@@ -10,6 +14,7 @@ import 'package:sleer/UI/components/app_button.dart';
 import 'package:sleer/UI/components/app_text_field.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/config/config_routes.dart';
+import 'package:sleer/services/api_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -20,11 +25,12 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
+  String phone = '';
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
   bool passwordsMatch = false;
+  bool verifyPhone = false;
 
   final TextEditingController phoneController = TextEditingController();
   // String initialCountry = 'NG';
@@ -49,12 +55,36 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _validatePasswords() {
-    // Updating the state to trigger a rebuild with the new value of passwordsMatch
     setState(() {
       passwordsMatch = passwordController.text.isNotEmpty &&
           passwordController.text == confirmPasswordController.text &&
           passwordController.text.length >= 8;
     });
+  }
+
+  Future<void> register() async {
+    final apiService = ApiService();
+    try {
+      final data = {
+        'phone': phone,
+        'password': passwordController.text,
+      };
+
+      final response = await apiService.request(
+        '/user/register',
+        data: jsonEncode(data),
+        options: Options(method: 'POST'),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Post data success: ${response.data}');
+      } else {
+        debugPrint(
+            'Post data error: ${response.statusCode} ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Post data exception: $e');
+    }
   }
 
   @override
@@ -65,12 +95,18 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
+  void onOTPVerified(bool isVerified) {
+    setState(() {
+      verifyPhone = isVerified;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    String phone = '';
     String verifyToken = '';
-    bool verifyPhone = false;
+
     final Size size = MediaQuery.of(context).size;
+
     return SignUpLayout(
       page: Container(
         width: size.width,
@@ -82,7 +118,7 @@ class _SignUpPageState extends State<SignUpPage> {
             topRight: Radius.circular(50),
           ),
         ),
-        child: verifyPhone == true
+        child: verifyPhone == false
             ? Form(
                 key: formKey,
                 child: Column(
@@ -122,31 +158,37 @@ class _SignUpPageState extends State<SignUpPage> {
 
                         if (formKey.currentState?.validate() == true) {
                           // Navigator.of(context).pushNamed(AppRoutes.login);
-                          await FirebaseAuth.instance.verifyPhoneNumber(
-                            phoneNumber: '$phone',
-                            verificationCompleted:
-                                (PhoneAuthCredential credential) {},
-                            verificationFailed: (FirebaseAuthException e) {},
-                            codeSent:
-                                (String verificationId, int? resendToken) {
-                              verifyToken = verificationId;
+                          try {
+                            await FirebaseAuth.instance.verifyPhoneNumber(
+                              phoneNumber: '$phone',
+                              verificationCompleted:
+                                  (PhoneAuthCredential credential) {},
+                              verificationFailed: (FirebaseAuthException e) {},
+                              codeSent:
+                                  (String verificationId, int? resendToken) {
+                                verifyToken = verificationId;
 
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text("OTP"),
-                                  content: OTPDialog(
-                                    verifyToken: verifyToken,
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text("OTP"),
+                                    content: OTPDialog(
+                                      onOTPVerified: onOTPVerified,
+                                      verifyToken: verifyToken,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            codeAutoRetrievalTimeout:
-                                (String verificationId) {},
-                          );
+                                );
+                              },
+                              codeAutoRetrievalTimeout:
+                                  (String verificationId) {},
+                            );
+                          } catch (e) {
+                            debugPrint(
+                                "----------------------------didnt send OTP");
+                          }
                         }
                       },
-                      child: Text('Validate'),
+                      child: Text('Send Code'),
                     ),
                   ],
                 ),
@@ -189,12 +231,32 @@ class _SignUpPageState extends State<SignUpPage> {
                           try {
                             debugPrint(
                                 "seef ${phone}-${passwordController.text}");
+                            register();
+                            Navigator.of(context).pushNamed(ConfigRoutes.login);
+                            Fluttertoast.showToast(
+                              msg: "Xác thực thành công!",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.TOP,
+                              timeInSecForIosWeb: 2,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                              fontSize: 16.0,
+                            );
                             Navigator.of(context).pushNamedAndRemoveUntil(
                               ConfigRoutes.login,
                               (route) => false,
                             );
                           } catch (e) {
                             debugPrint(e.toString());
+                            Fluttertoast.showToast(
+                              msg: "Xác thực that bai!",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.TOP,
+                              timeInSecForIosWeb: 2,
+                              backgroundColor: Colors.orange,
+                              textColor: Colors.white,
+                              fontSize: 16.0,
+                            );
                           }
                         },
                       ),
@@ -208,7 +270,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
 class OTPDialog extends StatefulWidget {
   final String verifyToken;
-  const OTPDialog({super.key, required this.verifyToken});
+  final Function(bool isVerified) onOTPVerified;
+  const OTPDialog({
+    super.key,
+    required this.verifyToken,
+    required this.onOTPVerified,
+  });
 
   @override
   State<OTPDialog> createState() => _OTPDialogState();
@@ -331,7 +398,7 @@ class _OTPDialogState extends State<OTPDialog> {
 
                       await auth.signInWithCredential(credential);
                       if (context.mounted) {
-                        // Navigator.of(context).pushNamed(AppRoutes.login);
+                        widget.onOTPVerified(true);
                         Navigator.of(context).pop();
                       }
                     } catch (e) {

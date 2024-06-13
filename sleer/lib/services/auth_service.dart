@@ -20,7 +20,7 @@ class AuthService {
     if (isValid(phone, password)) {
       try {
         final response = await http.post(
-          Uri.parse(ConfigApiRoutes.loginAuth),
+          Uri.parse('${ConfigApiRoutes.baseURL}/login'),
           //
           body: {
             'phone': phone,

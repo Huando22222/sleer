@@ -44,6 +44,8 @@ dependencies:
   #network
   dio: ^5.4.3+1
   cached_network_image: ^3.3.1
+  #notifications
+  fluttertoast: ^8.2.6
   #ui
   modal_bottom_sheet: ^3.0.0
   pinput: ^4.0.0
