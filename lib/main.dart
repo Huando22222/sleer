@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
             // create: (context) => AuthBloc(),
             create: (context) {
           if (auth != null) {
+            debugPrint(auth!.phone);
             return AuthBloc()..add(AuthKeepLoginEvent(auth: auth!));
           } else {
             return AuthBloc(); // Xử lý khi auth là null
@@ -87,7 +88,7 @@ class StateWidget extends StatelessWidget {
           return LoginPage();
         }
         if (state is AuthLoginState) {
-          return const HomePage();
+          return const HomePage(); // PageView()
         }
         return Container();
       },
