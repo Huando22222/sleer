@@ -1,5 +1,5 @@
-const PostLocation = require('../models/PostLocations');
-const User = require('../models/Users');
+const PostLocation = require('../models/post-location');
+const User = require('../models/user');
 const schoolData = require('../hardcode/school');
 module.exports = {
     DeletePostLocation: async (req, res) => {

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 class AppTextField extends StatelessWidget {
+  final TextInputType? keyboardType;
   final String? hintText;
   final Widget? label;
   final ValueChanged<String>? onChanged;
@@ -12,11 +13,13 @@ class AppTextField extends StatelessWidget {
     this.label,
     this.onChanged,
     this.controller,
+    this.keyboardType,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      keyboardType: keyboardType,
       controller: controller,
       onChanged: onChanged,
       decoration: InputDecoration(

@@ -1,6 +1,6 @@
-const userRouter = require("./users");
-const postsRouter = require("./posts");
-const postsLocationRouter = require("./postLocations");
+const userRouter = require("./user-routes");
+const postsRouter = require("./post-routes");
+const postsLocationRouter = require("./post-location-routes");
 
 function route(app) {
 	app.use("/user", userRouter);

@@ -1,23 +1,37 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sleer/UI/auth/login/login_page.dart';
-import 'package:sleer/UI/auth/profile/profile_page.dart';
-import 'package:sleer/UI/chat/chat_page.dart';
-import 'package:sleer/UI/home/home_page.dart';
+
 import 'package:sleer/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sleer/blocs/auth_bloc/auth_event.dart';
 import 'package:sleer/blocs/auth_bloc/auth_state.dart';
 import 'package:sleer/blocs/contact_bloc/contact_bloc.dart';
 import 'package:sleer/config/config_routes.dart';
+import 'package:sleer/models/user.dart';
+import 'package:sleer/screens/auth/login/login_page.dart';
+import 'package:sleer/screens/home/home_page.dart';
+import 'package:sleer/services/shared_pref_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  final sharedPrefService = SharedPrefService();
+  final User? auth = await sharedPrefService.getUser();
+  // if (auth != null) {
+  //   BlocProvider.of<AuthBloc>(context).add(AuthKeepLoginEvent(user: auth));
+  // }
+  runApp(MyApp(
+    auth: auth,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final User? auth;
+  const MyApp({
+    super.key,
+    this.auth,
+  });
 
   // This widget is the root of your application.
   @override
@@ -28,8 +42,14 @@ class MyApp extends StatelessWidget {
           create: (context) => ContactBloc(),
         ),
         BlocProvider(
-          create: (context) => AuthBloc(),
-        )
+            // create: (context) => AuthBloc(),
+            create: (context) {
+          if (auth != null) {
+            return AuthBloc()..add(AuthKeepLoginEvent(auth: auth!));
+          } else {
+            return AuthBloc(); // Xử lý khi auth là null
+          }
+        })
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -64,17 +84,7 @@ class StateWidget extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthInitial) {
-          return const LoginPage();
-          // return const ProfilePage();
-          // return Scaffold(
-          //   body: PageView(
-          //     children: const [
-          //       ProfilePage(),
-          //       HomePage(),
-          //       ChatPage(),
-          //     ],
-          //   ),
-          // );
+          return LoginPage();
         }
         if (state is AuthLoginState) {
           return const HomePage();

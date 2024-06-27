@@ -5,7 +5,7 @@ dotenv.config();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
-const route = require("./routes");
+const route = require("./routes/index-routes");
 
 ////socket zone
 const server = require("http").Server(app);
@@ -50,6 +50,9 @@ app.use(express.urlencoded({ /*limit: "10mb",*/ extended: true }));
 route(app);
 server.listen(process.env.PORT || port, () =>
 	console.log(
-		`Example app listening on port ${process.env.PORT}!\nhttp://cmd => ipconfig:${process.env.PORT}\nhttp://192.168.1.47:${process.env.PORT}\n(depending on your ipconfig address)`
+		`
+		Example app listening on port ${process.env.PORT}!
+		http://cmd => ipconfig:${process.env.PORT}
+		http://192.168.1.47:${process.env.PORT}(depending on your ipconfig address)`
 	)
 );

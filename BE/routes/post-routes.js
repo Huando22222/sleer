@@ -88,7 +88,7 @@
 // module.exports = router;
 //////////////////////////////////////////////////////////////////////////////////////////
 const express = require("express");
-const PostsController = require("../controllers/PostsController");
+const PostsController = require("../controllers/post-controller");
 const router = express.Router();
 const path = require("path");
 const multer = require("multer");

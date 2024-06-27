@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
 const accountSchema = new mongoose.Schema({
-	phone: { type: "string" },
-	password: { type: "string" },
+	phone: { type: String, required: true, unique: true },
+	password: { type: String, required: true },
+
 	createdAt: { type: Date, default: Date.now },
 });
 

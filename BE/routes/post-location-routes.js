@@ -1,5 +1,5 @@
 const express = require("express");
-const PostLocationController = require("../controllers/PostLocationController");
+const PostLocationController = require("../controllers/post-location-controller");
 const router = express.Router();
 
 

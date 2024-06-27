@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router(); 
-const UsersController = require('../controllers/UsersController');
+const UsersController = require('../controllers/user-controller');
 const path = require("path");
 const multer = require("multer");
+const AuthorizationMiddleware = require('../middlewares/authorization-middleware');
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -24,10 +25,17 @@ const storage = multer.diskStorage({
 // 	}
 // };
 const upload = multer({ storage });
-router.post("/login", UsersController.LoginUser);
+router.post("/delete-user-test-only", UsersController.DeleteUser);
+router.post(
+	"/refresh-token",
+	AuthorizationMiddleware.VerifyRefreshToken,
+	UsersController.RefreshToken
+);
+router.post("/login", UsersController.Login);
+router.post("/logout", AuthorizationMiddleware.VerifyAccessToken,UsersController.Logout);
+router.post("/register", UsersController.Register);
 router.post("/profile", upload.single("avatar"), UsersController.profile);
 router.post("/profileUpdate", upload.single("avatar"), UsersController.profileUpdate);
-router.post("/register", UsersController.RegisterUser);
 // router.post("/", UsersController.test);
 
 

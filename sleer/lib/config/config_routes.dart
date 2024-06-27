@@ -1,7 +1,7 @@
-import 'package:sleer/UI/auth/login/login_page.dart';
-import 'package:sleer/UI/auth/profile/profile_page.dart';
-import 'package:sleer/UI/auth/signup/signup_page.dart';
-import 'package:sleer/UI/home/home_page.dart';
+import 'package:sleer/screens/auth/login/login_page.dart';
+import 'package:sleer/screens/auth/profile/profile_page.dart';
+import 'package:sleer/screens/auth/signup/signup_page.dart';
+import 'package:sleer/screens/home/home_page.dart';
 
 // import '../UI/auth/signup/test.dart';
 
@@ -19,7 +19,7 @@ class ConfigRoutes {
   static final pages = {
     test: (context) => const ProfilePage(),
     home: (context) => const HomePage(),
-    login: (context) => const LoginPage(),
+    login: (context) => LoginPage(),
     signup: (context) => const SignUpPage(),
   };
 }

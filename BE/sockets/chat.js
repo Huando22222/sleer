@@ -1,7 +1,7 @@
 // chatSocketManager.js
-const Message = require("../models/Messages");
-const Room = require("../models/Rooms");
-const User = require("../models/Users");
+const Message = require("../models/message");
+const Room = require("../models/room");
+const User = require("../models/user");
 function generateRandomRoomName(length) {
 	const characters =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:sleer/UI/components/avatar/cpn_avatar_holder.dart';
-import 'package:sleer/UI/components/background_label.dart';
+import 'package:sleer/screens/components/avatar/cpn_avatar_holder.dart';
+import 'package:sleer/screens/components/background_label.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});

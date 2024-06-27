@@ -9,12 +9,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:pinput/pinput.dart';
 
-import 'package:sleer/UI/auth/signup/signup_layout.dart';
-import 'package:sleer/UI/components/app_button.dart';
-import 'package:sleer/UI/components/app_text_field.dart';
+import 'package:sleer/screens/auth/signup/signup_layout.dart';
+import 'package:sleer/screens/components/app_button.dart';
+import 'package:sleer/screens/components/app_text_field.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/config/config_routes.dart';
 import 'package:sleer/services/api_service.dart';
+import 'package:sleer/services/toast_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -64,9 +65,11 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> register() async {
     final apiService = ApiService();
+    // String domesticPhoneNumber = '0${phone.substring(3)}';
     try {
       final data = {
         'phone': phone,
+        // 'phone': "0948025455"  ,
         'password': passwordController.text,
       };
 
@@ -75,15 +78,43 @@ class _SignUpPageState extends State<SignUpPage> {
         data: jsonEncode(data),
         options: Options(method: 'POST'),
       );
+      debugPrint("seef1 ");
+      final statusHandlers = {
+        201: (Response response /*, BuildContext context */) {
+          final responseData = response.data['message'];
+          showToast(
+            msg: "$responseData",
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
 
-      if (response.statusCode == 200) {
-        debugPrint('Post data success: ${response.data}');
-      } else {
-        debugPrint(
-            'Post data error: ${response.statusCode} ${response.statusMessage}');
-      }
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            ConfigRoutes.login,
+            (route) => false,
+          );
+        },
+        409: (Response response /*, BuildContext context */) {
+          final responseData = response.data;
+          showToast(
+            msg: "Account already exists: $responseData",
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.orange,
+          );
+          debugPrint("Account already exists: ");
+        },
+      };
+      debugPrint("seef ");
+      apiService.handleResponse(response /*, context */, statusHandlers);
+      // if (mounted) {}
     } catch (e) {
-      print('Post data exception: $e');
+      debugPrint(e.toString());
+      showToast(
+        msg: "Something wrong!",
+        gravity: ToastGravity.TOP,
+        timeInSecForIosWeb: 2,
+        backgroundColor: Colors.red,
+      );
     }
   }
 
@@ -118,7 +149,7 @@ class _SignUpPageState extends State<SignUpPage> {
             topRight: Radius.circular(50),
           ),
         ),
-        child: verifyPhone == false
+        child: verifyPhone == true
             ? Form(
                 key: formKey,
                 child: Column(
@@ -227,38 +258,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     if (passwordsMatch)
                       AppButton(
                         title: "Sign Up",
-                        onPressed: () {
-                          try {
-                            debugPrint(
-                                "seef ${phone}-${passwordController.text}");
-                            register();
-                            Navigator.of(context).pushNamed(ConfigRoutes.login);
-                            Fluttertoast.showToast(
-                              msg: "Xác thực thành công!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.TOP,
-                              timeInSecForIosWeb: 2,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              ConfigRoutes.login,
-                              (route) => false,
-                            );
-                          } catch (e) {
-                            debugPrint(e.toString());
-                            Fluttertoast.showToast(
-                              msg: "Xác thực that bai!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.TOP,
-                              timeInSecForIosWeb: 2,
-                              backgroundColor: Colors.orange,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                          }
-                        },
+                        onPressed: () => register(),
                       ),
                   ],
                 ),
