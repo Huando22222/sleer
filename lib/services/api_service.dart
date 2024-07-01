@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sleer/config/config_api_routes.dart';
 import 'package:dio/dio.dart';
-import 'package:sleer/services/toast_service.dart';
+import 'package:sleer/services/util_service.dart';
 
 class ApiService {
   final String _baseUrl = ConfigApiRoutes.baseURL;
@@ -59,7 +59,7 @@ class ApiService {
       );
       return response;
     } on DioException catch (e) {
-      showToast(
+      UtilService.showToast(
         msg: "error while trying to send request - server not responding",
         backgroundColor: Colors.orange,
       );
@@ -67,22 +67,18 @@ class ApiService {
     }
   }
 
-  void handleResponse(
-    Response response,
-    // BuildContext context,
-    Map<int, Function(Response /*, BuildContext */)> statusHandlers,
-  ) {
+  Future<dynamic> handleResponse(
+      Response response, Map<int, Function(Response)> statusHandlers) async {
     if (statusHandlers.containsKey(response.statusCode)) {
-      statusHandlers[response.statusCode]?.call(response /*, context*/);
+      return await statusHandlers[response.statusCode]!(response);
     } else {
-      // Default handling for unspecified status codes
       if (response.statusCode == 500) {
-        showToast(
+        UtilService.showToast(
           msg: "Internal server error!",
           backgroundColor: Colors.red,
         );
       } else {
-        showToast(
+        UtilService.showToast(
           msg: "Unknown status code",
           backgroundColor: Colors.red,
         );

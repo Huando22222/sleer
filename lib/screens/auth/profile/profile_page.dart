@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:sleer/blocs/auth_bloc/auth_bloc.dart';
+import 'package:sleer/blocs/auth_bloc/auth_event.dart';
+import 'package:sleer/blocs/auth_bloc/auth_state.dart';
+import 'package:sleer/models/user.dart';
 import 'package:sleer/screens/components/avatar/cpn_avatar_holder.dart';
 import 'package:sleer/screens/components/background_label.dart';
+import 'package:sleer/services/util_service.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -12,15 +18,14 @@ class ProfilePage extends StatelessWidget {
     final GlobalKey<CpnAvatarHolderState> avatarHolderKey =
         GlobalKey<CpnAvatarHolderState>();
 
-    Future<void> _pickImage(BuildContext context, ImageSource source) async {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: source);
+    final User auth = (context.read<AuthBloc>().state as AuthLoginState).auth;
+    ////////////////////////////////
+    Future<void> pickImage(ImageSource source) async {
+      final pickedFile = await UtilService.pickImage(source: source);
       if (pickedFile != null) {
-        debugPrint("success" + pickedFile.path);
         avatarHolderKey.currentState?.updateImage(pickedFile.path);
       } else {
-        debugPrint("false");
-        print('No image selected.');
+        debugPrint('No image selected.');
       }
     }
 
@@ -62,21 +67,22 @@ class ProfilePage extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         ListTile(
-                                          leading: Icon(Icons.photo_library),
-                                          title: Text('Choose from Gallery'),
+                                          leading:
+                                              const Icon(Icons.photo_library),
+                                          title:
+                                              const Text('Choose from Gallery'),
                                           onTap: () async {
                                             Navigator.of(context).pop();
-                                            await _pickImage(
-                                                context, ImageSource.gallery);
+                                            await pickImage(
+                                                ImageSource.gallery);
                                           },
                                         ),
                                         ListTile(
-                                          leading: Icon(Icons.camera_alt),
-                                          title: Text('Take a Photo'),
+                                          leading: const Icon(Icons.camera_alt),
+                                          title: const Text('Take a Photo'),
                                           onTap: () async {
                                             Navigator.of(context).pop();
-                                            await _pickImage(
-                                                context, ImageSource.camera);
+                                            await pickImage(ImageSource.camera);
                                           },
                                         ),
                                       ],
@@ -88,7 +94,7 @@ class ProfilePage extends StatelessWidget {
                             size: 150,
                           ),
                         ),
-                        Positioned(
+                        const Positioned(
                           bottom: 0,
                           right: 0,
                           child: Icon(
@@ -101,7 +107,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   const BackgroundLabel(
-                    opacity: 0.5,
+                    opacity: 1,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -114,7 +120,8 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   BackgroundLabel(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     child: InkWell(
                       onTap: () {
                         showBarModalBottomSheet(
@@ -122,7 +129,7 @@ class ProfilePage extends StatelessWidget {
                           // expand: true,
                           builder: (context) {
                             return SingleChildScrollView(
-                              child: Container(
+                              child: SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 2 / 3,
                                 child: Column(
@@ -137,13 +144,45 @@ class ProfilePage extends StatelessWidget {
                       },
                       child: Row(
                         children: [
-                          Text("0/20 friends"),
-                          Spacer(),
-                          Icon(Icons.arrow_drop_down),
+                          Text("${auth.friends.length}/20 friends"),
+                          const Spacer(),
+                          const Icon(Icons.arrow_drop_down),
                         ],
                       ),
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 50),
+                  const BackgroundLabel(
+                    opacity: 1,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.lock_person_outlined),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("Friends"),
+                      ],
+                    ),
+                  ),
+                  BackgroundLabel(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    child: InkWell(
+                      onTap: () {
+                        BlocProvider.of<AuthBloc>(context)
+                            .add(AuthLogoutEvent());
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Logout"),
+                          SizedBox(width: 20),
+                          Icon(Icons.logout_outlined),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

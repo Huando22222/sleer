@@ -12,7 +12,7 @@ import 'package:sleer/config/config_images.dart';
 import 'package:sleer/config/config_routes.dart';
 import 'package:sleer/services/api_service.dart';
 import 'package:sleer/services/shared_pref_service.dart';
-import 'package:sleer/services/toast_service.dart';
+import 'package:sleer/services/util_service.dart';
 
 class LoginPage extends StatelessWidget {
   final sharedPrefService = SharedPrefService();
@@ -24,61 +24,61 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> login() async {
-      final apiService = ApiService();
-      try {
-        final data = {
-          'phone': "0948025455",
-          'password': "123456789",
-          // 'phone': phoneController.text,
-          // 'password': passwordController.text,
-        };
+    // Future<void> login() async {
+    //   final apiService = ApiService();
+    //   try {
+    //     final data = {
+    //       'phone': "0948025455",
+    //       'password': "123456789",
+    //       // 'phone': phoneController.text,
+    //       // 'password': passwordController.text,
+    //     };
 
-        final response = await apiService.request(
-          '/user/login',
-          data: jsonEncode(data),
-          options: Options(method: 'POST'),
-        );
-        final statusHandlers = {
-          200: (Response response /*, BuildContext context */) async {
-            final responseMessage = response.data['message'];
-            final responseUser = response.data['user'];
-            // final responseToken = response.data['accessToken'];
-            debugPrint("before ------ $responseUser");
-            final User user = User.fromJson(responseUser);
-            //
-            await sharedPrefService.setUser(user);
-            final User? haha = await sharedPrefService.getUser();
-            debugPrint("haha ------ ${haha!.id}");
-            showToast(
-              msg: "$responseMessage",
-              timeInSecForIosWeb: 2,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-            );
-          },
-          401: (Response response /* , BuildContext context*/) {
-            final responseData = response.data;
-            showToast(
-              msg: "$responseData",
-              timeInSecForIosWeb: 2,
-              backgroundColor: Colors.orange,
-            );
-            debugPrint("Account already exists: ");
-          },
-        };
-        apiService.handleResponse(response, statusHandlers);
-        // if (mounted) {}
-      } catch (e) {
-        // debugPrint(e.toString());
-        // showToast(
-        //   msg: "Something wrong!",
-        //   gravity: ToastGravity.TOP,
-        //   timeInSecForIosWeb: 2,
-        //   backgroundColor: Colors.red,
-        // );
-      }
-    }
+    //     final response = await apiService.request(
+    //       '/user/login',
+    //       data: jsonEncode(data),
+    //       options: Options(method: 'POST'),
+    //     );
+    //     final statusHandlers = {
+    //       200: (Response response /*, BuildContext context */) async {
+    //         final responseMessage = response.data['message'];
+    //         final responseUser = response.data['user'];
+    //         // final responseToken = response.data['accessToken'];
+    //         debugPrint("before ------ $responseUser");
+    //         final User user = User.fromJson(responseUser);
+    //         //
+    //         await sharedPrefService.setUser(user);
+    //         final User? haha = await sharedPrefService.getUser();
+    //         debugPrint("haha ------ ${haha!.id}");
+    //         UtilService.showToast(
+    //           msg: "$responseMessage",
+    //           timeInSecForIosWeb: 2,
+    //           backgroundColor: Colors.green,
+    //           textColor: Colors.white,
+    //         );
+    //       },
+    //       401: (Response response /* , BuildContext context*/) {
+    //         final responseData = response.data;
+    //         UtilService.showToast(
+    //           msg: "$responseData",
+    //           timeInSecForIosWeb: 2,
+    //           backgroundColor: Colors.orange,
+    //         );
+    //         debugPrint("Account already exists: ");
+    //       },
+    //     };
+    //     apiService.handleResponse(response, statusHandlers);
+    //     // if (mounted) {}
+    //   } catch (e) {
+    //     // debugPrint(e.toString());
+    //     // showToast(
+    //     //   msg: "Something wrong!",
+    //     //   gravity: ToastGravity.TOP,
+    //     //   timeInSecForIosWeb: 2,
+    //     //   backgroundColor: Colors.red,
+    //     // );
+    //   }
+    // }
 
     return Scaffold(
       body: GestureDetector(

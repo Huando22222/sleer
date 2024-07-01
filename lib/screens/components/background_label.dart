@@ -20,7 +20,7 @@ class BackgroundLabel extends StatelessWidget {
     return Container(
       margin: margin ?? EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: Colors.amber.withOpacity(opacity ?? 0.1),
+        color: Color.fromARGB(23, 255, 222, 7).withOpacity(opacity ?? 0.2),
         borderRadius: BorderRadius.all(
           Radius.circular(radius ?? 16),
         ),

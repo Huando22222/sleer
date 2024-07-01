@@ -21,4 +21,4 @@ class AuthLoginState extends AuthState {
   });
 }
 
-class AuthLogoutState extends AuthState {}
+// class AuthLogoutState extends AuthState {}

@@ -1,12 +1,15 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sleer/blocs/auth_bloc/auth_event.dart';
 import 'package:sleer/blocs/auth_bloc/auth_state.dart';
 import 'package:sleer/models/user.dart';
 import 'package:sleer/services/auth_service.dart';
+import 'package:sleer/services/shared_pref_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final _pref = SharedPrefService();
   AuthBloc() : super(AuthInitial()) {
     on<AuthLoginEvent>(authLogin);
 
@@ -15,7 +18,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthLogoutEvent>((event, emit) {
-      emit(AuthLoadingState());
+      try {
+        _pref.clearCache();
+        emit(AuthInitial());
+      } catch (e) {
+        debugPrint("logout");
+      }
     });
   }
 
@@ -27,9 +35,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       User? auth = await AuthService.authLogin(event.phone, event.password);
       if (auth != null) {
+        await _pref.setUser(auth);
         emit(AuthLoginState(auth: auth));
       } else {
-        emit(AuthErrorState(message: 'Login failed'));
+        emit(AuthErrorState(message: 'Login failed sadadas'));
       }
     } catch (e) {
       emit(AuthErrorState(message: 'An error occurred'));

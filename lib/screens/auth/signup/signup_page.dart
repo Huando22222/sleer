@@ -15,7 +15,7 @@ import 'package:sleer/screens/components/app_text_field.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/config/config_routes.dart';
 import 'package:sleer/services/api_service.dart';
-import 'package:sleer/services/toast_service.dart';
+import 'package:sleer/services/util_service.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -82,7 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
       final statusHandlers = {
         201: (Response response /*, BuildContext context */) {
           final responseData = response.data['message'];
-          showToast(
+          UtilService.showToast(
             msg: "$responseData",
             timeInSecForIosWeb: 2,
             backgroundColor: Colors.green,
@@ -96,7 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
         },
         409: (Response response /*, BuildContext context */) {
           final responseData = response.data;
-          showToast(
+          UtilService.showToast(
             msg: "Account already exists: $responseData",
             timeInSecForIosWeb: 2,
             backgroundColor: Colors.orange,
@@ -109,7 +109,7 @@ class _SignUpPageState extends State<SignUpPage> {
       // if (mounted) {}
     } catch (e) {
       debugPrint(e.toString());
-      showToast(
+      UtilService.showToast(
         msg: "Something wrong!",
         gravity: ToastGravity.TOP,
         timeInSecForIosWeb: 2,
