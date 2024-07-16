@@ -1,4 +1,3 @@
-import 'package:sleer/models/auth.dart';
 import 'package:sleer/models/user.dart';
 
 abstract class AuthState {}

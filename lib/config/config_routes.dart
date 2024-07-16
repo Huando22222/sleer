@@ -1,7 +1,7 @@
 import 'package:sleer/screens/auth/login/login_page.dart';
 import 'package:sleer/screens/auth/profile/profile_page.dart';
 import 'package:sleer/screens/auth/signup/signup_page.dart';
-import 'package:sleer/screens/home/home_page.dart';
+import 'package:sleer/screens/page_view_screen.dart';
 
 // import '../UI/auth/signup/test.dart';
 
@@ -18,7 +18,7 @@ class ConfigRoutes {
 
   static final pages = {
     test: (context) => const ProfilePage(),
-    home: (context) => const HomePage(),
+    home: (context) => const PageViewScreen(),
     login: (context) => LoginPage(),
     signup: (context) => const SignUpPage(),
   };

@@ -41,8 +41,8 @@ class CpnAvatarHolderState extends State<CpnAvatarHolder> {
   @override
   Widget build(BuildContext context) {
     bool isLocalFile = _pathImage != null && File(_pathImage!).existsSync();
-    print('Path Image: $_pathImage'); // Gỡ lỗi: In ra đường dẫn hình ảnh
-    print('Is Local File: $isLocalFile');
+    debugPrint('Path Image: $_pathImage');
+    debugPrint('Is Local File: $isLocalFile');
     return ClipOval(
       child: InkWell(
         onTap: widget.onTap,

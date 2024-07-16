@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sleer/models/user.dart';
 import 'package:sleer/services/api_service.dart';
 import 'package:sleer/services/shared_pref_service.dart';
@@ -21,8 +22,8 @@ class AuthService {
     String password,
   ) async {
     if (/*isValid(phone, password) */ true) {
-      // final sharedPrefService = SharedPrefService();
-      final apiService = ApiService();
+      // final apiService = ApiService();
+      final apiService = GetIt.instance<ApiService>();
       try {
         final data = {
           // 'phone': phone,
@@ -38,17 +39,20 @@ class AuthService {
 
         final statusHandlers = {
           200: (Response response /*, BuildContext context */) async {
-            final responseMessage = response.data['message'];
+            // final responseMessage = response.data['message'];
             final responseUser = response.data['user'];
-            // final responseToken = response.data['accessToken'];
-            debugPrint("before ------ $responseUser");
+            final responseToken = response.data['accessToken'];
             final User user = User.fromJson(responseUser);
-            UtilService.showToast(
-              msg: "$responseMessage",
-              timeInSecForIosWeb: 2,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-            );
+            // UtilService.showToast(
+            //   msg: "$responseMessage",
+            //   timeInSecForIosWeb: 2,
+            //   backgroundColor: Colors.green,
+            //   textColor: Colors.white,
+            // );
+            debugPrint("responseToken: ${responseToken}");
+            final sharedPrefService = SharedPrefService();
+            sharedPrefService.setToken(responseToken);
+            apiService.updateToken(responseToken);
             return user;
           },
           401: (Response response /* , BuildContext context*/) {
@@ -58,7 +62,6 @@ class AuthService {
               timeInSecForIosWeb: 2,
               backgroundColor: Colors.orange,
             );
-            debugPrint("auth_service: ");
           },
         };
         // apiService.handleResponse(response, statusHandlers);

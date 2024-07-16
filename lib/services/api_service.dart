@@ -9,7 +9,6 @@ class ApiService {
   String? _token;
 
   ApiService({String? token}) {
-    // Cấu hình cho Dio
     _token = token;
     _dio.options.baseUrl = _baseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 5);
@@ -18,6 +17,7 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
+          debugPrint("token: $_token");
           if (_token != null) {
             options.headers['Authorization'] = 'Bearer $_token';
           }
@@ -59,10 +59,7 @@ class ApiService {
       );
       return response;
     } on DioException catch (e) {
-      UtilService.showToast(
-        msg: "error while trying to send request - server not responding",
-        backgroundColor: Colors.orange,
-      );
+      debugPrint("dio: ${e.toString()}");
       throw Exception('API error: $e');
     }
   }
@@ -88,5 +85,9 @@ class ApiService {
 
   void updateToken(String token) {
     _token = token;
+  }
+
+  String? getToken() {
+    return _token;
   }
 }

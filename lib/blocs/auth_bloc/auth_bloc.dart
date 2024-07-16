@@ -10,6 +10,7 @@ import 'package:sleer/services/shared_pref_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final _pref = SharedPrefService();
+
   AuthBloc() : super(AuthInitial()) {
     on<AuthLoginEvent>(authLogin);
 
@@ -31,14 +32,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLoginEvent event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoadingState());
+    // emit(AuthLoadingState());
     try {
       User? auth = await AuthService.authLogin(event.phone, event.password);
       if (auth != null) {
         await _pref.setUser(auth);
+
         emit(AuthLoginState(auth: auth));
       } else {
-        emit(AuthErrorState(message: 'Login failed sadadas'));
+        emit(AuthErrorState(message: 'Login failed '));
       }
     } catch (e) {
       emit(AuthErrorState(message: 'An error occurred'));

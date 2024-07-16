@@ -2,7 +2,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:sleer/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sleer/blocs/auth_bloc/auth_event.dart';
@@ -13,15 +12,17 @@ import 'package:sleer/blocs/contact_bloc/contact_bloc.dart';
 import 'package:sleer/config/config_routes.dart';
 import 'package:sleer/models/user.dart';
 import 'package:sleer/screens/auth/login/login_page.dart';
-import 'package:sleer/screens/home/home_page.dart';
+import 'package:sleer/screens/page_view_screen.dart';
+import 'package:sleer/services/api_service.dart';
 import 'package:sleer/services/shared_pref_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sleer/services/util_service.dart';
 
-final getIt = GetIt.instance;
+final GetIt getIt = GetIt.instance;
 
 void setup() {
+  getIt.registerLazySingleton(() => ApiService());
   getIt.registerLazySingleton(() => Connectivity());
 }
 
@@ -59,15 +60,25 @@ class MyApp extends StatelessWidget {
           create: (context) => ContactBloc(),
         ),
         BlocProvider(
-            // create: (context) => AuthBloc(),
-            create: (context) {
-          if (auth != null) {
-            debugPrint(auth!.phone);
-            return AuthBloc()..add(AuthKeepLoginEvent(auth: auth!));
-          } else {
-            return AuthBloc(); // Xử lý khi auth là null
-          }
-        })
+          // create: (context) => AuthBloc(),
+          create: (context) {
+            if (auth != null) {
+              debugPrint(auth!.phone);
+              final apiService = GetIt.instance<ApiService>();
+              final sharedPrefService = SharedPrefService();
+              sharedPrefService.getToken().then((token) {
+                if (token != null) {
+                  apiService.updateToken(token);
+                }
+              }).catchError((error) {
+                debugPrint('Failed to get token: $error');
+              });
+              return AuthBloc()..add(AuthKeepLoginEvent(auth: auth!));
+            } else {
+              return AuthBloc();
+            }
+          },
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -84,7 +95,6 @@ class MyApp extends StatelessWidget {
             if (state is ConnectivityDisconnected) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  
                   content: const Text('No internet connection'),
                   backgroundColor: Colors.grey,
                   duration: const Duration(days: 365),
@@ -130,7 +140,7 @@ class StateWidget extends StatelessWidget {
           return LoginPage();
         }
         if (state is AuthLoginState) {
-          return const HomePage(); // PageView()
+          return const PageViewScreen();
         }
         if (state is AuthErrorState) {
           UtilService.showToast(

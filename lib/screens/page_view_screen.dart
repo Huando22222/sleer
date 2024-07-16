@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sleer/screens/auth/profile/profile_page.dart';
+import 'package:sleer/screens/home/news_feed_page.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class PageViewScreen extends StatelessWidget {
+  const PageViewScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,16 +11,8 @@ class HomePage extends StatelessWidget {
       body: PageView(
         controller: PageController(initialPage: 1),
         children: [
-          ProfilePage(),
-          Container(
-            color: Colors.green,
-            child: Center(
-              child: Text(
-                'Page 2',
-                style: TextStyle(fontSize: 24, color: Colors.white),
-              ),
-            ),
-          ),
+          const ProfilePage(),
+          NewsFeedPage(),
           Container(
             color: Colors.blue,
             child: Center(
