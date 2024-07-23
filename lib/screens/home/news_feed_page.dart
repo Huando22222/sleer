@@ -4,13 +4,16 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sleer/blocs/post_bloc/post_bloc.dart';
+import 'package:sleer/blocs/post_bloc/post_state.dart';
 import 'package:sleer/config/config_images.dart';
-import 'package:sleer/screens/components/app_text_field.dart';
 import 'package:sleer/screens/components/avatar/cpn_avatar_holder.dart';
 import 'package:sleer/screens/components/background_label.dart';
 import 'package:sleer/screens/components/vertical_scroll_layout.dart';
 import 'package:sleer/services/api_service.dart';
+import 'package:sleer/services/shared_pref_service.dart';
 
 class NewsFeedPage extends StatefulWidget {
   const NewsFeedPage({super.key});
@@ -85,11 +88,15 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
 
   Future<void> _newPost() async {
     try {
+      final sharedPrefService = SharedPrefService();
       if (picture != null) {
+        final user = await sharedPrefService.getUser();
         FormData formData = FormData.fromMap({
+          'id': user!.id,
           'content': content.text, // 'content': 'lock wat i got ♥',
           'image': await MultipartFile.fromFile(picture!.path),
         });
+
         final Response = await apiService.request(
           '/post/new',
           data: formData,
@@ -240,6 +247,18 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                 onPressed: _newPost,
                 child: const Icon(Icons.check_circle_outline_outlined),
               ),
+            BlocProvider(
+              create: (context) => PostBloc(),
+              child: BlocBuilder<PostBloc, PostState>(
+                builder: (context, state) {
+                  if (state is PostFetchedState) {
+                    return Text("data");
+                  } else {
+                    return Text("data"); //skeleton
+                  }
+                },
+              ), //pageview vertically? //column
+            )
           ],
         ),
       ),
