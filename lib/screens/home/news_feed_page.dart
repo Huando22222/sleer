@@ -247,18 +247,15 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                 onPressed: _newPost,
                 child: const Icon(Icons.check_circle_outline_outlined),
               ),
-            BlocProvider(
-              create: (context) => PostBloc(),
-              child: BlocBuilder<PostBloc, PostState>(
-                builder: (context, state) {
-                  if (state is PostFetchedState) {
-                    return Text("data");
-                  } else {
-                    return Text("data"); //skeleton
-                  }
-                },
-              ), //pageview vertically? //column
-            )
+            // BlocBuilder<PostBloc, PostState>(
+            //   builder: (context, state) {
+            //     if (state is PostFetchedState) {
+            //       return Text("data");
+            //     } else {
+            //       return Text("data"); //skeleton
+            //     }
+            //   },
+            // )
           ],
         ),
       ),

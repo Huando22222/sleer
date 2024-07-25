@@ -14,8 +14,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<AuthLoginEvent>(authLogin);
 
+    // on<AuthInitialEvent>((event, emit) {
+    //   emit(AuthLoginState());
+    // });
+
     on<AuthKeepLoginEvent>((event, emit) {
-      emit(AuthLoginState(auth: event.auth));
+      emit(AuthLoggedinState(auth: event.auth));
     });
 
     on<AuthLogoutEvent>((event, emit) {
@@ -38,7 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (auth != null) {
         await _pref.setUser(auth);
 
-        emit(AuthLoginState(auth: auth));
+        emit(AuthLoggedinState(auth: auth));
       } else {
         emit(AuthErrorState(message: 'Login failed '));
       }

@@ -1,18 +1,12 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sleer/blocs/auth_bloc/auth_bloc.dart';
 import 'package:sleer/blocs/auth_bloc/auth_event.dart';
-import 'package:sleer/models/user.dart';
 import 'package:sleer/screens/components/app_text_field.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/config/config_routes.dart';
-import 'package:sleer/services/api_service.dart';
 import 'package:sleer/services/shared_pref_service.dart';
-import 'package:sleer/services/util_service.dart';
 
 class LoginPage extends StatelessWidget {
   final sharedPrefService = SharedPrefService();
@@ -62,8 +56,6 @@ class LoginPage extends StatelessWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        // context.read<AuthBloc>().add(AuthLogoutEvent());
-                        // Navigator.of(context).pushNamed(AppRoutes.signup);
                         Navigator.of(context).pushNamed(
                           ConfigRoutes.signup,
                         );
@@ -77,7 +69,6 @@ class LoginPage extends StatelessWidget {
                 ),
                 const Spacer(),
                 ElevatedButton(
-                  // onPressed: () => login(),
                   onPressed: () {
                     BlocProvider.of<AuthBloc>(context).add(
                       AuthLoginEvent(

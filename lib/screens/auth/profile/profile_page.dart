@@ -18,7 +18,8 @@ class ProfilePage extends StatelessWidget {
     final GlobalKey<CpnAvatarHolderState> avatarHolderKey =
         GlobalKey<CpnAvatarHolderState>();
 
-    final User auth = (context.read<AuthBloc>().state as AuthLoginState).auth;
+    final User auth =
+        (context.read<AuthBloc>().state as AuthLoggedinState).auth;
     ////////////////////////////////
     Future<void> pickImage(ImageSource source) async {
       final pickedFile = await UtilService.pickImage(source: source);
