@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sleer/blocs/auth_bloc/auth_bloc.dart';
@@ -7,6 +8,8 @@ import 'package:sleer/screens/components/app_text_field.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/config/config_routes.dart';
 import 'package:sleer/services/shared_pref_service.dart';
+import 'package:sleer/services/socket_service.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class LoginPage extends StatelessWidget {
   final sharedPrefService = SharedPrefService();
@@ -69,7 +72,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     BlocProvider.of<AuthBloc>(context).add(
                       AuthLoginEvent(
                         phone: phoneController.text,
@@ -87,6 +90,39 @@ class LoginPage extends StatelessWidget {
                     minimumSize: const Size(200, 40),
                   ),
                   child: const Text("Login"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final sharedPrefService = SharedPrefService();
+                    debugPrint(
+                        "token login: ${await sharedPrefService.getToken()}");
+                  },
+                  child: Text("token"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    FlutterBackgroundService().invoke('setAsConnectSocketAuth');
+                  },
+                  child: Text("connect auth"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    FlutterBackgroundService()
+                        .invoke('setAsConnectSocketBByHand');
+                  },
+                  child: Text("connect guess"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    FlutterBackgroundService().invoke('setAsDisconnectSocket');
+                  },
+                  child: Text("dis"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    FlutterBackgroundService().invoke('stopService');
+                  },
+                  child: Text("stop"),
                 ),
                 const Spacer(),
               ],

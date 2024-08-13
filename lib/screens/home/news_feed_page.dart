@@ -1,19 +1,22 @@
-import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sleer/blocs/post_bloc/post_bloc.dart';
+import 'package:sleer/blocs/post_bloc/post_event.dart';
 import 'package:sleer/blocs/post_bloc/post_state.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/screens/components/avatar/cpn_avatar_holder.dart';
 import 'package:sleer/screens/components/background_label.dart';
 import 'package:sleer/screens/components/vertical_scroll_layout.dart';
 import 'package:sleer/services/api_service.dart';
+import 'package:sleer/services/news_feed_service.dart';
 import 'package:sleer/services/shared_pref_service.dart';
+import 'package:sleer/services/util_service.dart';
 
 class NewsFeedPage extends StatefulWidget {
   const NewsFeedPage({super.key});
@@ -35,8 +38,21 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
   @override
   void initState() {
     super.initState();
+    _fetchPost();
     _initializeControllerFuture = _initializeCamera();
-    // _getPost();
+  }
+
+  Future<void> _fetchPost() async {
+    var internet = await UtilService.checkInternetConnection();
+    if (internet == true) {
+      BlocProvider.of<PostBloc>(context).add(PostFetchEvent());
+    } else {
+      debugPrint("Connectivity isn't connected.");
+    }
+  }
+
+  Future<void> _refresh() async {
+    await _fetchPost();
   }
 
   Future<void> _initializeCamera() async {
@@ -73,41 +89,6 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
     });
   }
 
-  Future<void> _getPost() async {
-    try {
-      final token = apiService.getToken();
-      debugPrint('getToken: $token');
-      final Response = await apiService.request(
-        '/post/',
-        options: Options(method: 'GET'),
-      );
-    } catch (e) {
-      debugPrint('Error new post: $e');
-    }
-  }
-
-  Future<void> _newPost() async {
-    try {
-      final sharedPrefService = SharedPrefService();
-      if (picture != null) {
-        final user = await sharedPrefService.getUser();
-        FormData formData = FormData.fromMap({
-          'id': user!.id,
-          'content': content.text, // 'content': 'lock wat i got ♥',
-          'image': await MultipartFile.fromFile(picture!.path),
-        });
-
-        final Response = await apiService.request(
-          '/post/new',
-          data: formData,
-          options: Options(method: 'POST', contentType: 'multipart/form-data'),
-        );
-      }
-    } catch (e) {
-      debugPrint('Error new post: $e');
-    }
-  }
-
   @override
   void dispose() {
     _controller.dispose();
@@ -141,27 +122,27 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
         ],
       ),
       body: VerticalScrollLayout(
+        onRefresh: _refresh,
         widget: Column(
           children: [
             Stack(
               children: [
                 if (picture == null)
                   Positioned(
-                    child: FutureBuilder<void>(
-                      future: _initializeControllerFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return Container(
-                            decoration: const BoxDecoration(),
-                            height: MediaQuery.of(context).size.width,
-                            width: MediaQuery.of(context).size.width,
-                            child: CameraPreview(_controller),
-                          );
-                        } else {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                      },
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: FutureBuilder<void>(
+                        future: _initializeControllerFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return CameraPreview(_controller);
+                          } else {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                        },
+                      ),
                     ),
                   )
                 else
@@ -244,18 +225,72 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
               )
             else
               ElevatedButton(
-                onPressed: _newPost,
+                onPressed: () async {
+                  bool isPosted =
+                      await NewsFeedService().newPost(picture!, content.text);
+                  if (isPosted) {
+                    setState(() {
+                      picture = null;
+                      content.clear();
+                    });
+                    BlocProvider.of<PostBloc>(context).add(PostFetchEvent());
+                  }
+                },
                 child: const Icon(Icons.check_circle_outline_outlined),
               ),
-            // BlocBuilder<PostBloc, PostState>(
-            //   builder: (context, state) {
-            //     if (state is PostFetchedState) {
-            //       return Text("data");
-            //     } else {
-            //       return Text("data"); //skeleton
-            //     }
-            //   },
-            // )
+            BlocBuilder<PostBloc, PostState>(
+              builder: (context, state) {
+                if (state is PostFetchedState) {
+                  if (state.listPost.isNotEmpty) {
+                    debugPrint("image: ${state.listPost[0].image}");
+                    return Column(
+                      children: [
+                        Text(state.listPost[state.listPost.length - 1].content),
+                        Image.network(
+                            "http://192.168.1.47:3000/posts/0948025455/9e116b53e642b7a80d2409fa5fe04c0e5a38ac0ed56e242fd9f44829a419dc36.jpg"),
+                        CachedNetworkImage(
+                          imageUrl:
+                              state.listPost[state.listPost.length - 1].image,
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Text("error data");
+                } else {
+                  return Text("no data"); //skeleton add later
+                }
+              },
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final sharedPrefService = SharedPrefService();
+                debugPrint("token home: ${await sharedPrefService.getToken()}");
+              },
+              child: Text("token"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                FlutterBackgroundService().invoke('setAsConnectSocketBByHand');
+              },
+              child: Text("connect"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                FlutterBackgroundService().invoke('setAsDisconnectSocket');
+              },
+              child: Text("dis"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                FlutterBackgroundService().invoke('stopService');
+              },
+              child: Text("stop"),
+            ),
           ],
         ),
       ),

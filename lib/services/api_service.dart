@@ -17,7 +17,7 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
-          debugPrint("token: $_token");
+          debugPrint("token API: $_token");
           if (_token != null) {
             options.headers['Authorization'] = 'Bearer $_token';
           }

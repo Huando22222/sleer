@@ -46,6 +46,10 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<!-- custome -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>dev.flutter.background.refresh</string>
+	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires Photo Library access to function properly.</string>
 	<key>NSCameraUsageDescription</key>
@@ -59,5 +63,6 @@
 	</dict>
 	<key>NSContactsUsageDescription</key>  
 	<string>This app requires contacts access to function properly.</string>
+	<!-- custome -->
 </dict>
 </plist>

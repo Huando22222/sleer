@@ -8,17 +8,17 @@ import 'package:sleer/services/shared_pref_service.dart';
 class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc() : super(PostInitial(listPost: [])) {
     final sharedPrefService = SharedPrefService();
-    on<PostFetchEvent>((event, emit) async {
-      try {
-        emit(PostFetchedState(listPost: await NewsFeedService.getPost()));
-      } catch (e) {
-        debugPrint("PostBloc: $e");
-      }
-    });
     on<PostInitialEvent>((event, emit) async {
       try {
         emit(
             PostFetchedState(listPost: await sharedPrefService.getListPosts()));
+      } catch (e) {
+        debugPrint("PostBloc: $e");
+      }
+    });
+    on<PostFetchEvent>((event, emit) async {
+      try {
+        emit(PostFetchedState(listPost: await NewsFeedService().getPost()));
       } catch (e) {
         debugPrint("PostBloc: $e");
       }

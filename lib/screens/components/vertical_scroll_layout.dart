@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 class VerticalScrollLayout extends StatelessWidget {
   final Widget widget;
-  const VerticalScrollLayout({super.key, required this.widget});
+  final Future<void> Function()? onRefresh;
+  const VerticalScrollLayout({
+    super.key,
+    required this.widget,
+    this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -10,10 +15,13 @@ class VerticalScrollLayout extends StatelessWidget {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: widget,
+      child: RefreshIndicator(
+        onRefresh: onRefresh ?? () async {},
+        child: SingleChildScrollView(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: widget,
+          ),
         ),
       ),
     );

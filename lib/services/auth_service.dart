@@ -49,7 +49,6 @@ class AuthService {
             //   backgroundColor: Colors.green,
             //   textColor: Colors.white,
             // );
-            debugPrint("responseToken: ${responseToken}");
             final sharedPrefService = SharedPrefService();
             sharedPrefService.setToken(responseToken);
             apiService.updateToken(responseToken);

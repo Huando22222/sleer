@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:sleer/blocs/auth_bloc/auth_bloc.dart';
@@ -9,11 +10,13 @@ import 'package:sleer/blocs/connectivity_bloc.dart/connectivity_bloc.dart';
 import 'package:sleer/blocs/connectivity_bloc.dart/connectivity_state.dart';
 import 'package:sleer/blocs/contact_bloc/contact_bloc.dart';
 import 'package:sleer/blocs/post_bloc/post_bloc.dart';
+import 'package:sleer/blocs/post_bloc/post_event.dart';
 import 'package:sleer/config/config_routes.dart';
 import 'package:sleer/models/user.dart';
 import 'package:sleer/screens/auth/login/login_page.dart';
 import 'package:sleer/screens/page_view_screen.dart';
 import 'package:sleer/services/api_service.dart';
+import 'package:sleer/services/background_sevice.dart';
 import 'package:sleer/services/shared_pref_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -29,7 +32,15 @@ void setup() {
 void main() async {
   setup();
   WidgetsFlutterBinding.ensureInitialized();
+  final service = FlutterBackgroundService();
+
+  bool isRunning = await service.isRunning();
+  if (!isRunning) {
+    await service.startService();
+  }
+
   await Firebase.initializeApp();
+
   final sharedPrefService = SharedPrefService();
   final User? auth = await sharedPrefService.getUser();
 
@@ -47,9 +58,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sharedPrefService = SharedPrefService();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+          // truoc khi call api phai kiem tra status
           create: (context) => ConnectivityBloc(getIt<Connectivity>()),
         ),
         BlocProvider(
@@ -59,7 +72,6 @@ class MyApp extends StatelessWidget {
           create: (context) {
             if (auth != null) {
               final apiService = GetIt.instance<ApiService>();
-              final sharedPrefService = SharedPrefService();
               sharedPrefService.getToken().then((token) {
                 if (token != null) {
                   apiService.updateToken(token);
@@ -72,14 +84,16 @@ class MyApp extends StatelessWidget {
               return AuthBloc();
             }
           },
-        ),BlocProvider(
-          create: (context) => PostBloc(),
-          child: Container(),
+        ),
+        BlocProvider(
+          create: (context) {
+            return PostBloc()..add(PostInitialEvent());
+          },
         )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'SLEER',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
@@ -144,7 +158,7 @@ class StateWidget extends StatelessWidget {
           );
           return LoginPage();
         }
-        return Text("data");
+        return LoginPage();
       },
     );
   }

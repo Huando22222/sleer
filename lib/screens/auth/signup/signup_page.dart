@@ -68,8 +68,8 @@ class _SignUpPageState extends State<SignUpPage> {
     // String domesticPhoneNumber = '0${phone.substring(3)}';
     try {
       final data = {
-        'phone': phone,
-        // 'phone': "0948025455"  ,
+        // 'phone': phone,
+        'phone': "0948025455",
         'password': passwordController.text,
       };
 
@@ -78,7 +78,6 @@ class _SignUpPageState extends State<SignUpPage> {
         data: jsonEncode(data),
         options: Options(method: 'POST'),
       );
-      debugPrint("seef1 ");
       final statusHandlers = {
         201: (Response response /*, BuildContext context */) {
           final responseData = response.data['message'];
@@ -104,7 +103,6 @@ class _SignUpPageState extends State<SignUpPage> {
           debugPrint("Account already exists: ");
         },
       };
-      debugPrint("seef ");
       apiService.handleResponse(response /*, context */, statusHandlers);
       // if (mounted) {}
     } catch (e) {
