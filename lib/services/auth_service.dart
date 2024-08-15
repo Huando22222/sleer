@@ -51,6 +51,7 @@ class AuthService {
             // );
             final sharedPrefService = SharedPrefService();
             sharedPrefService.setToken(responseToken);
+            debugPrint("auth_service: ${await sharedPrefService.getToken()}");
             apiService.updateToken(responseToken);
             return user;
           },

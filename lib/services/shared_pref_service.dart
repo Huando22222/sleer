@@ -11,8 +11,9 @@ class SharedPrefService {
 
   Future<void> setCache({required String key, required String value}) async {
     final SharedPreferences pref = await _getPreferences();
-    bool isSaved = await pref.setString(key, value);
-    debugPrint("pref save $isSaved: $key-$value");
+    await pref.setString(key, value);
+    // bool isSaved =
+    // debugPrint("cache $isSaved: $key-$value");
   }
 
   Future<String?> getCache({required String key}) async {
@@ -68,8 +69,10 @@ class SharedPrefService {
     return await pref.remove(key);
   }
 
-  Future<bool> clearCache() async {
+  Future< /*bool*/ void> clearCache() async {
     final SharedPreferences pref = await _getPreferences();
-    return await pref.clear();
+    debugPrint("sharedP token before: ${await getToken()}");
+    /*return*/ await pref.clear();
+    debugPrint("sharedP token after: ${await getToken()}");
   }
 }

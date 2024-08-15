@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:sleer/blocs/post_bloc/post_bloc.dart';
 import 'package:sleer/blocs/post_bloc/post_event.dart';
 import 'package:sleer/blocs/post_bloc/post_state.dart';
+import 'package:sleer/config/config_api_routes.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/screens/components/avatar/cpn_avatar_holder.dart';
 import 'package:sleer/screens/components/background_label.dart';
@@ -247,7 +248,7 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                       children: [
                         Text(state.listPost[state.listPost.length - 1].content),
                         Image.network(
-                            "http://192.168.1.47:3000/posts/0948025455/9e116b53e642b7a80d2409fa5fe04c0e5a38ac0ed56e242fd9f44829a419dc36.jpg"),
+                            "${ConfigApiRoutes.urlImage}posts/0948025455/9e116b53e642b7a80d2409fa5fe04c0e5a38ac0ed56e242fd9f44829a419dc36.jpg"),
                         CachedNetworkImage(
                           imageUrl:
                               state.listPost[state.listPost.length - 1].image,
@@ -265,31 +266,6 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                   return Text("no data"); //skeleton add later
                 }
               },
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final sharedPrefService = SharedPrefService();
-                debugPrint("token home: ${await sharedPrefService.getToken()}");
-              },
-              child: Text("token"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                FlutterBackgroundService().invoke('setAsConnectSocketBByHand');
-              },
-              child: Text("connect"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                FlutterBackgroundService().invoke('setAsDisconnectSocket');
-              },
-              child: Text("dis"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                FlutterBackgroundService().invoke('stopService');
-              },
-              child: Text("stop"),
             ),
           ],
         ),

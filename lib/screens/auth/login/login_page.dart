@@ -91,39 +91,6 @@ class LoginPage extends StatelessWidget {
                   ),
                   child: const Text("Login"),
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    final sharedPrefService = SharedPrefService();
-                    debugPrint(
-                        "token login: ${await sharedPrefService.getToken()}");
-                  },
-                  child: Text("token"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    FlutterBackgroundService().invoke('setAsConnectSocketAuth');
-                  },
-                  child: Text("connect auth"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    FlutterBackgroundService()
-                        .invoke('setAsConnectSocketBByHand');
-                  },
-                  child: Text("connect guess"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    FlutterBackgroundService().invoke('setAsDisconnectSocket');
-                  },
-                  child: Text("dis"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    FlutterBackgroundService().invoke('stopService');
-                  },
-                  child: Text("stop"),
-                ),
                 const Spacer(),
               ],
             ),

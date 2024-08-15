@@ -24,13 +24,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoggedinState(auth: event.auth));
     });
 
-    on<AuthLogoutEvent>((event, emit) {
+    on<AuthLogoutEvent>((event, emit) async {
       try {
-        _pref.clearCache();
+        await _pref.clearCache();
         //call api to log out
-        service.invoke(
-          'setAsReconnectSocket',
-        );
+        final service = FlutterBackgroundService();
+        service.invoke('stopService');
+        service.startService();
         emit(AuthInitial());
       } catch (e) {
         debugPrint("logout");
@@ -47,10 +47,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       User? auth = await AuthService.authLogin(event.phone, event.password);
       if (auth != null) {
         await _pref.setUser(auth);
-
-        service.invoke(
-          'setAsReconnectSocket',
-        );
+        final service = FlutterBackgroundService();
+        service.invoke('stopService');
+        service.startService();
         debugPrint("logged in: ${auth.phone}");
         emit(AuthLoggedinState(auth: auth));
       } else {

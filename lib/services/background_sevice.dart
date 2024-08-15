@@ -10,7 +10,7 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:permission_handler/permission_handler.dart';
 
 Future<void> initializeService() async {
-  //bg-service # main app
+  //bg-service # thread to main app //config socket turn on/off for now , create instance to get cache later
   if (await Permission.notification.isDenied) {
     await Permission.notification.request();
   }
@@ -26,6 +26,8 @@ Future<void> initializeService() async {
       onStart: onStart,
       isForegroundMode: true,
       autoStart: true,
+      autoStartOnBoot: true,
+
       // notificationChannelId: 'my_foreground',
       // initialNotificationTitle: 'Service is Running',
       // initialNotificationContent: 'Tap to return to the app',
@@ -47,22 +49,11 @@ void onStart(ServiceInstance service) {
   debugPrint("onStart service bg");
 
   _initializeSocket();
-  // service.on('setAsInitializeSocket').listen((event) {
-  // });
-
-  service.on('setAsReconnectSocket').listen((event) {
-    socketClient.reconnect();
-  });
 
   service.on('setAsDisconnectSocket').listen((event) {
     socketClient.disconnect();
   });
-  service.on('setAsConnectSocketBByHand').listen((event) {
-    socketClient.connectGuess();
-  });
-  service.on('setAsConnectSocketAuth').listen((event) {
-    socketClient.connectAuth();
-  });
+
   //------------------------------------//
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
@@ -77,6 +68,7 @@ void onStart(ServiceInstance service) {
   if (service is IOSServiceInstance) {}
 
   service.on('stopService').listen((event) {
+    socketClient.disconnect();
     service.stopSelf();
   });
 

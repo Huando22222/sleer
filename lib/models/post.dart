@@ -1,6 +1,8 @@
+import 'package:sleer/models/friend.dart';
+
 class Post {
   final String id;
-  final Owner owner;
+  final Friend owner;
   final String content;
   final String image;
   final int reaction;
@@ -17,8 +19,8 @@ class Post {
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json["_id"],
-      owner: Owner.fromJson(json["owner"]),
-      content: json["content"],
+      owner: Friend.fromJson(json["owner"]),
+      content: json["content"] ?? '',
       image: json["image"],
       reaction: json["reaction"],
       createdAt: DateTime.parse(json['createdAt']),
