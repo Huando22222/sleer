@@ -1,21 +1,19 @@
 import 'package:sleer/models/post.dart';
 
-abstract class PostState {
-  List<Post> listPost;
-  PostState({required this.listPost});
-}
+abstract class PostState {}
 
-class PostInitial extends PostState {
-  PostInitial({required super.listPost});
-}
+class PostInitial extends PostState {}
 
-// these class are useless ???
-// class PostUploadingState extends PostState {}
-// class PostFetchingState extends PostState {}
-class PostFetchedState extends PostState {
-  PostFetchedState({required super.listPost});
-}
+class PostLoaded extends PostState {
+  final List<Post> posts;
 
-class PostErrorState extends PostState {
-  PostErrorState({required super.listPost});
+  PostLoaded({required this.posts});
+
+  PostLoaded copyWith({
+    List<Post>? posts,
+  }) {
+    return PostLoaded(
+      posts: posts ?? this.posts,
+    );
+  }
 }

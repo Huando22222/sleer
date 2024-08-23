@@ -14,7 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final service = FlutterBackgroundService();
 
   AuthBloc() : super(AuthInitial()) {
-    on<AuthLoginEvent>(authLogin);
+    on<AuthLoginEvent>(_authLogin);
 
     // on<AuthInitialEvent>((event, emit) {
     //   emit(AuthLoginState());
@@ -38,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  FutureOr<void> authLogin(
+  FutureOr<void> _authLogin(
     AuthLoginEvent event,
     Emitter<AuthState> emit,
   ) async {

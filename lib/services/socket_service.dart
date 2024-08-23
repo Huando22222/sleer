@@ -1,7 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sleer/blocs/post_bloc/post_bloc.dart';
+import 'package:sleer/blocs/post_bloc/post_event.dart';
 import 'package:sleer/config/config_api_routes.dart';
+import 'package:sleer/main.dart';
+import 'package:sleer/models/post.dart';
 import 'package:sleer/services/shared_pref_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -9,6 +14,7 @@ class SocketClient {
   IO.Socket? socket;
   static SocketClient? _instance;
   final sharedPrefService = SharedPrefService();
+  final postBlocGetIt = getIt<PostBloc>();
 
   SocketClient._internal();
 
@@ -48,7 +54,15 @@ class SocketClient {
 
   void _eventListeners() {
     socket?.on('new_post', (data) {
-      debugPrint('socket on: new_post: $data');
+      if (data != null && data is List) {
+        try {
+          debugPrint('socket on: new_post: ${data.toString()}');
+          final newPosts = data.map((post) => Post.fromJson(post)).toList();
+          postBlocGetIt.add(NewPostReceivedEvent((newPosts)));
+        } catch (e) {
+          debugPrint('socket on new_post: $e');
+        }
+      }
     });
 
     socket?.on('userJoined', (data) {

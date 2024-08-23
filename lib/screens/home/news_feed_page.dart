@@ -234,36 +234,26 @@ class _NewsFeedPageState extends State<NewsFeedPage> {
                       picture = null;
                       content.clear();
                     });
-                    BlocProvider.of<PostBloc>(context).add(PostFetchEvent());
                   }
                 },
                 child: const Icon(Icons.check_circle_outline_outlined),
               ),
             BlocBuilder<PostBloc, PostState>(
               builder: (context, state) {
-                if (state is PostFetchedState) {
-                  if (state.listPost.isNotEmpty) {
-                    debugPrint("image: ${state.listPost[0].image}");
-                    return Column(
-                      children: [
-                        Text(state.listPost[state.listPost.length - 1].content),
-                        Image.network(
-                            "${ConfigApiRoutes.urlImage}posts/0948025455/9e116b53e642b7a80d2409fa5fe04c0e5a38ac0ed56e242fd9f44829a419dc36.jpg"),
-                        CachedNetworkImage(
-                          imageUrl:
-                              state.listPost[state.listPost.length - 1].image,
-                          placeholder: (context, url) =>
-                              CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                        ),
-                      ],
-                    );
-                  }
-
-                  return Text("error data");
+                if (state is PostInitial) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is PostLoaded) {
+                  return ListView.builder(
+                    itemCount: state.posts.length,
+                    itemBuilder: (context, index) {
+                      final post = state.posts[index];
+                      return ListTile(
+                        title: Text(post.content),
+                      );
+                    },
+                  );
                 } else {
-                  return Text("no data"); //skeleton add later
+                  return const Center(child: Text('Something went wrong'));
                 }
               },
             ),

@@ -8,8 +8,6 @@ import 'package:sleer/screens/components/app_text_field.dart';
 import 'package:sleer/config/config_images.dart';
 import 'package:sleer/config/config_routes.dart';
 import 'package:sleer/services/shared_pref_service.dart';
-import 'package:sleer/services/socket_service.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 
 class LoginPage extends StatelessWidget {
   final sharedPrefService = SharedPrefService();

@@ -1,12 +1,17 @@
-import 'package:camera/camera.dart';
+import 'package:sleer/models/post.dart';
 
 abstract class PostEvent {}
 
-class PostInitialEvent extends PostEvent {} //get sheredPreference
+class LoadPostEvent extends PostEvent {}
 
-class PostFetchEvent extends PostEvent {} //api
+// class AddPostEvent extends PostEvent {
+//   final Post post;
 
-class PostUploadEvent extends PostEvent {
-  // final XFile image;
-  // PostUploadEvent({required this.image});
-} //XFile : photo
+//   AddPostEvent(this.post);
+// }
+
+class NewPostReceivedEvent extends PostEvent {
+  final List<Post> posts;
+
+  NewPostReceivedEvent(this.posts);
+}

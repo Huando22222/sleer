@@ -47,19 +47,29 @@ class SharedPrefService {
 
   Future<void> setListPosts(List<Post> posts) async {
     final SharedPreferences pref = await _getPreferences();
-    final List<String> postJsonList =
-        posts.map((post) => jsonEncode(post.toJson())).toList();
-    await pref.setStringList('posts', postJsonList);
+    try {
+      final List<String> postJsonList =
+          posts.map((post) => jsonEncode(post.toJson())).toList();
+      await pref.setStringList('posts', postJsonList);
+    } catch (e) {
+      debugPrint("error: set post shared preferences");
+    }
   }
 
   Future<List<Post>> getListPosts() async {
-    final SharedPreferences pref = await _getPreferences();
-    final List<String>? postJsonList = pref.getStringList('posts');
-    if (postJsonList != null) {
-      return postJsonList.map((postJson) {
-        final Map<String, dynamic> postMap = jsonDecode(postJson);
-        return Post.fromJson(postMap);
-      }).toList();
+    try {
+      final SharedPreferences pref = await _getPreferences();
+      final List<String>? postJsonList = pref.getStringList('posts');
+      if (postJsonList != null) {
+        return postJsonList.map((postJson) {
+          final Map<String, dynamic> postMap = jsonDecode(postJson);
+          return Post.fromJson(postMap);
+        }).toList();
+        // return postsJson.map((post) => Post.fromJson(json.decode(post))).toList();
+      }
+    } catch (e) {
+      debugPrint("error: get post shared preferences");
+      return [];
     }
     return [];
   }

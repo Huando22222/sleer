@@ -16,7 +16,6 @@ import 'package:sleer/models/user.dart';
 import 'package:sleer/screens/auth/login/login_page.dart';
 import 'package:sleer/screens/page_view_screen.dart';
 import 'package:sleer/services/api_service.dart';
-import 'package:sleer/services/background_sevice.dart';
 import 'package:sleer/services/shared_pref_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -27,6 +26,7 @@ final GetIt getIt = GetIt.instance;
 void setup() {
   getIt.registerLazySingleton(() => ApiService());
   getIt.registerLazySingleton(() => Connectivity());
+  getIt.registerSingleton<PostBloc>(PostBloc());
 }
 
 void main() async {
@@ -66,6 +66,9 @@ class MyApp extends StatelessWidget {
           create: (context) => ConnectivityBloc(getIt<Connectivity>()),
         ),
         BlocProvider(
+          create: (context) => PostBloc(),
+        ),
+        BlocProvider(
           create: (context) => ContactBloc(),
         ),
         BlocProvider(
@@ -85,11 +88,6 @@ class MyApp extends StatelessWidget {
             }
           },
         ),
-        BlocProvider(
-          create: (context) {
-            return PostBloc()..add(PostInitialEvent());
-          },
-        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

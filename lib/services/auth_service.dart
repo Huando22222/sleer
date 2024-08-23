@@ -39,20 +39,16 @@ class AuthService {
 
         final statusHandlers = {
           200: (Response response /*, BuildContext context */) async {
-            // final responseMessage = response.data['message'];
             final responseUser = response.data['user'];
             final responseToken = response.data['accessToken'];
+            debugPrint("auth_service1: ${responseUser.toString()}");
             final User user = User.fromJson(responseUser);
-            // UtilService.showToast(
-            //   msg: "$responseMessage",
-            //   timeInSecForIosWeb: 2,
-            //   backgroundColor: Colors.green,
-            //   textColor: Colors.white,
-            // );
+
             final sharedPrefService = SharedPrefService();
-            sharedPrefService.setToken(responseToken);
             debugPrint("auth_service: ${await sharedPrefService.getToken()}");
+            sharedPrefService.setToken(responseToken);
             apiService.updateToken(responseToken);
+
             return user;
           },
           401: (Response response /* , BuildContext context*/) {
@@ -67,7 +63,7 @@ class AuthService {
         // apiService.handleResponse(response, statusHandlers);
         return await apiService.handleResponse(response, statusHandlers);
       } catch (e) {
-        debugPrint(e.toString());
+        debugPrint("auth service error: ${e.toString()}");
         UtilService.showToast(
           msg: "Something wrong!",
           timeInSecForIosWeb: 2,

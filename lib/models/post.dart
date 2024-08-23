@@ -38,39 +38,3 @@ class Post {
     };
   }
 }
-
-class Owner {
-  final String id;
-  final String displayName;
-  final String avatar;
-  final String phone;
-  final DateTime createdAt;
-
-  Owner({
-    required this.id,
-    required this.displayName,
-    required this.avatar,
-    required this.phone,
-    required this.createdAt,
-  });
-
-  factory Owner.fromJson(Map<String, dynamic> json) {
-    return Owner(
-      id: json["_id"],
-      displayName: json["displayName"],
-      avatar: json["avatar"],
-      phone: json["phone"],
-      createdAt: DateTime.parse(json["createdAt"]),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'displayName': displayName,
-      'avatar': avatar,
-      'phone': phone,
-      'createdAt': createdAt.toIso8601String(),
-    };
-  }
-}
